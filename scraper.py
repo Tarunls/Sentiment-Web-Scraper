@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 plt.style.use('ggplot')
-#from tqdm.notebook import tqdm
 
 # Gets API key for OpenMovieDB
 apikey = Path('API_KEY.txt').read_text()
