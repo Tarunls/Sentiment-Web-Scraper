@@ -84,7 +84,7 @@ for x in range(10):
 
 print(finaldf)
 ax = sns.barplot(data=finaldf, x='Score', y='Rating')
-ax.set_title('Bert Sentiment Scores vs IMDB Ratings')
+ax.set_title('Bert Sentiment Ratings vs IMDB Scores')
 plt.show()
 
 
