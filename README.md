@@ -5,6 +5,14 @@ a sentiment analysis model (Bert).
 
 For now the main focus of this scraper is on IMDB Reviews and is also utilizing the OpenMovieDB API
 
+## Dependencies
+
+To run this python script install the following libraries:
+
+```bash
+pip install torch torchvision torchaudio requests transformers bs4 pathlib pandas matplotlib seaborn
+```
+
 ## Usage
 
 In order to choose a movie to run the scraper for change the movie name in
