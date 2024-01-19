@@ -88,21 +88,6 @@ ax = sns.barplot(data=finaldf, x='Score', y='Rating')
 ax.set_title('Bert Sentiment Scores vs IMDB Ratings')
 plt.show()
 
-#print(len(names),len(scores),len(polarities),len(blurbs))  # Testing length of each list to see what wasn't grabbed (Likely due to BeautifulSoup's static issue)
-'''
-movies = pd.DataFrame.from_dict(movie_dict, orient='index')  
-df = movies.transpose() # Permute array
-'''
-
-'''
-matching = df[((df['Score'] >= 5) & (df['Rating'] >= 3)) | (df['Score'] <= 5) & (df['Rating'] <= 3)]            # Dataframe which selects the VADER results being positive to >= 5 reviews and negative to <= 5 reviews
-outliers = df[~(((df['Score'] >= 5) & (df['Rating'] >= 3)) | (df['Score'] <= 5) & (df['Rating'] <= 3))]         # Dataframe which takes anything that doesn't fit the criteria above.
-print(matching)
-print(outliers)
-ax = sns.barplot(data=matching, x='Score', y='Rating')
-ax.set_title('Compund Score by Amazon Star Review')
-plt.show()
-'''
 
 
 
