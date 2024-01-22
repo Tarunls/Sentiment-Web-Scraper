@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 from alive_progress import alive_bar; import time
+import loadpage
 plt.style.use('ggplot')
 
 # Gets API key for OpenMovieDB
@@ -30,10 +31,10 @@ try:
 except: print("Failed to retrieve the tokenizer or model")
 
 # Uses the search query to search the open movie database for the imdbID of the movie and url
-def get_url(searchquery,starnumber):
+def get_url(searchquery,ratingnumber):
      try:
           movieID = (requests.get(f'https://www.omdbapi.com/?t={searchquery}&apikey={apikey}').json())['imdbID']
-          return f'https://www.imdb.com/title/{movieID}/reviews?spoiler=hide&sort=curated&dir=desc&ratingFilter={starnumber}'
+          return f'https://www.imdb.com/title/{movieID}/reviews?spoiler=hide&sort=curated&dir=desc&ratingFilter={ratingnumber}'
      except: print("Movie not found")
 
 # Defines the function in order to use Bert to analyze the reviews
@@ -48,7 +49,7 @@ def sentiment_score(review):
      
 
 # Get the URL based on the movie, as well as initialize the user agent and the VADER analyzer
-moviename = 'avengers_endgame'
+moviename = 'godzilla_minus_one'
 user_agent = {'User-agent': 'Mozilla/5.0'}
 finaldf = pd.DataFrame()
 
@@ -57,41 +58,41 @@ def get_page_contents(url):
     page = requests.get(url, headers = user_agent)
     return BeautifulSoup(page.text, 'html.parser')
 
-with alive_bar(10) as bar:
-     for x in range(10):
-          url = get_url(moviename,x+1)
-
-          soup = get_page_contents(url)   # Pull page contents
-
-          names = []  #Initializes a list for the names
-
-          #For every link that BS4 finds that fits the <span> tag with the class described
-          
-          for links in soup.find_all('span', class_='display-name-link'):
-               name = links.get_text().strip()    #Text is stripped
-               names.append(name)                 #Added to list
-                    
-
-          #List for the actual user given scores
-          scores = []
-          for links in soup.find_all('span', class_='rating-other-user-rating'):
-               score = links.get_text().strip()
-               scores.append(int(str(score)[0:-3]))
+#with alive_bar(10) as bar:
+     #for x in range(10):
 
 
-          blurbs = []     #List for the review text
-          polarities = [] #List for VADER's analysis score of the text
+soup = BeautifulSoup(loadpage.fetchFullReviews(get_url(moviename,0)))   # Pull page contents
 
-          for links in soup.find_all('div', class_='text show-more__control'):
-               blurb = links.get_text().strip()
-               blurbs.append(blurb)
-               polarities.append(sentiment_score(blurb)) #Appends the Bert sentiment scores to the list
+names = []  #Initializes a list for the name
 
-          movie_dict = {'Name': names, 'Score': scores, 'Rating': polarities, 'Review': blurbs}       # Create dictionary for importing into a dataframe with the four main elements
-          movies = pd.DataFrame.from_dict(movie_dict, orient='index')  
-          df = movies.transpose() # Permute array
-          finaldf = finaldf._append(df)
-          bar()
+#For every link that BS4 finds that fits the <span> tag with the class described
+
+for links in soup.find_all('span', class_='display-name-link'):
+     name = links.get_text().strip()    #Text is stripped
+     names.append(name)                 #Added to list
+
+#List for the actual user given scores
+scores = []
+
+for links in soup.find_all('span', class_='rating-other-user-rating'):
+     score = links.get_text().strip()
+     scores.append(int(str(score)[0:-3]))
+
+blurbs = []     #List for the review text
+polarities = [] #List for BERT's analysis score of the text
+
+for links in soup.find_all('div', class_='text show-more__control'):
+     blurb = links.get_text().strip()
+     blurbs.append(blurb)
+     polarities.append(sentiment_score(blurb)) #Appends the Bert sentiment scores to the list
+
+movie_dict = {'Name': names, 'Score': scores, 'Rating': polarities, 'Review': blurbs}       # Create dictionary for importing into a dataframe with the four main elements
+movies = pd.DataFrame.from_dict(movie_dict, orient='index')  
+df = movies.transpose() # Permute array
+finaldf = finaldf._append(df)
+finaldf.dropna(subset=['Review'], inplace=True)
+         # bar()
 
 
 print(finaldf)

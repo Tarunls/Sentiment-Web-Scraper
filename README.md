@@ -13,6 +13,10 @@ To run this python script install the following libraries:
 pip install torch torchvision torchaudio requests transformers bs4 pathlib pandas matplotlib seaborn
 ```
 
+Requires installation of the lastest ```chromedriver.exe``` in order to run Selenium
+
+Put ```chromedriver.exe``` in the same directory that contains loadpage.py and scraper.py
+
 ## Usage
 
 In order to choose a movie to run the scraper for change the movie name in
